@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Hydration Tracker</title>
+<link rel="apple-touch-icon" href="data:image/png;base64,">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root {
+    --water: #2f8fd6;
+    --coffee: #7a4a2b;
+    --decaf: #b98a5e;
+    --bg: #0e1116;
+    --card: #171b22;
+    --text: #f2f4f7;
+    --muted: #8a93a3;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  body {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    text-align: center;
+    padding: 18px 16px 10px;
+  }
+  header h1 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 0 0 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .total-value {
+    font-size: clamp(50px, 17vw, 105px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    white-space: nowrap;
+  }
+  .total-unit {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+  .breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .breakdown .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  main {
+    flex: 1;
+    padding: 8px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .card-title {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .card-title .swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+  .card-title .amount {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .btn-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  button.dose {
+    border: none;
+    border-radius: 12px;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    transition: transform 0.08s ease, opacity 0.15s ease;
+  }
+  button.dose:active {
+    transform: scale(0.94);
+    opacity: 0.8;
+  }
+  .water-btn { background: var(--water); }
+  .coffee-btn { background: var(--coffee); }
+  .decaf-btn { background: var(--decaf); }
+
+  footer {
+    padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+    display: flex;
+    gap: 10px;
+  }
+  .ghost-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #2a2f3a;
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .ghost-btn:active { opacity: 0.6; }
+
+  #history-list {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .history-empty {
+    color: var(--muted);
+    font-size: 13px;
+    padding: 6px 0;
+    text-align: center;
+  }
+  .history-entry {
+    display: flex;
+    align-items: center;
+    background: #1e232c;
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+  .history-entry .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .history-entry .h-type {
+    text-transform: capitalize;
+    font-weight: 600;
+  }
+  .history-entry .h-amt {
+    margin-left: 8px;
+    color: var(--muted);
+  }
+  .history-entry .h-time {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+    padding-right: 8px;
+  }
+  .history-entry .h-del {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px 6px;
+  }
+  .history-entry .h-del:active { opacity: 0.5; }
+
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #262c37;
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="date-label">Today</h1>
+  <div class="total-value" id="total-value">0</div>
+  <div class="total-unit">cc</div>
+  <div class="breakdown">
+    <span><span class="dot" style="background:var(--water)"></span><span id="water-total">0</span> cc</span>
+    <span><span class="dot" style="background:var(--coffee)"></span><span id="coffee-total">0</span> cc</span>
+    <span><span class="dot" style="background:var(--decaf)"></span><span id="decaf-total">0</span> cc</span>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="card-title">
+      <span class="swatch" style="background:var(--water)"></span>
+      Water
+      <span class="amount" id="water-amount">0 cc</span>
+    </div>
+    <div class="btn-row">
+      <button class="dose water-btn" data-type="water" data-amt="200">200</button>
+      <button class="dose water-btn" data-type="water" data-amt="250">250</button>
+      <button class="dose water-btn" data-type="water" data-amt="300">300</button>
+      <button class="dose water-btn" data-type="water" data-amt="400">400</button>
+      <button class="dose water-btn" data-type="water" data-amt="450">450</button>
+      <button class="dose water-btn" data-type="water" data-amt="500">500</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="swatch" style="background:var(--coffee)"></span>
+      Coffee
+      <span class="amount" id="coffee-amount">0 cc</span>
+    </div>
+    <div class="btn-row">
+      <button class="dose coffee-btn" data-type="coffee" data-amt="200">200</button>
+      <button class="dose coffee-btn" data-type="coffee" data-amt="250">250</button>
+      <button class="dose coffee-btn" data-type="coffee" data-amt="300">300</button>
+      <button class="dose coffee-btn" data-type="coffee" data-amt="400">400</button>
+      <button class="dose coffee-btn" data-type="coffee" data-amt="450">450</button>
+      <button class="dose coffee-btn" data-type="coffee" data-amt="500">500</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="swatch" style="background:var(--decaf)"></span>
+      Decaf Coffee
+      <span class="amount" id="decaf-amount">0 cc</span>
+    </div>
+    <div class="btn-row">
+      <button class="dose decaf-btn" data-type="decaf" data-amt="200">200</button>
+      <button class="dose decaf-btn" data-type="decaf" data-amt="250">250</button>
+      <button class="dose decaf-btn" data-type="decaf" data-amt="300">300</button>
+      <button class="dose decaf-btn" data-type="decaf" data-amt="400">400</button>
+      <button class="dose decaf-btn" data-type="decaf" data-amt="450">450</button>
+      <button class="dose decaf-btn" data-type="decaf" data-amt="500">500</button>
+    </div>
+  </div>
+
+  <div class="card" id="history-card">
+    <div class="card-title" id="history-toggle">
+      History — today
+      <span class="amount" id="history-count">0 entries</span>
+    </div>
+    <div id="history-list" style="display:flex;"></div>
+  </div>
+</main>
+
+<footer>
+  <button class="ghost-btn" id="undo-btn">Undo last</button>
+  <button class="ghost-btn" id="reset-btn">Reset today</button>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'hydration-tracker-data';
+
+  function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function loadData() {
+    let raw;
+    try {
+      raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    } catch (e) {
+      raw = null;
+    }
+    const key = todayKey();
+    if (!raw || raw.date !== key) {
+      raw = { date: key, water: 0, coffee: 0, decaf: 0, log: [] };
+      saveData(raw);
+    }
+    return raw;
+  }
+
+  function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  let data = loadData();
+
+  const els = {
+    total: document.getElementById('total-value'),
+    waterTotal: document.getElementById('water-total'),
+    coffeeTotal: document.getElementById('coffee-total'),
+    decafTotal: document.getElementById('decaf-total'),
+    waterAmount: document.getElementById('water-amount'),
+    coffeeAmount: document.getElementById('coffee-amount'),
+    decafAmount: document.getElementById('decaf-amount'),
+    dateLabel: document.getElementById('date-label'),
+    toast: document.getElementById('toast'),
+    historyList: document.getElementById('history-list'),
+    historyCount: document.getElementById('history-count'),
+    historyToggle: document.getElementById('history-toggle'),
+  };
+
+  const typeColor = { water: 'var(--water)', coffee: 'var(--coffee)', decaf: 'var(--decaf)' };
+  let historyOpen = true;
+
+  function formatTime(ts) {
+    return new Date(ts).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function renderHistory() {
+    els.historyCount.textContent = data.log.length + (data.log.length === 1 ? ' entry' : ' entries');
+    els.historyList.innerHTML = '';
+    if (data.log.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'history-empty';
+      empty.textContent = 'Nothing logged yet today';
+      els.historyList.appendChild(empty);
+      return;
+    }
+    // newest first
+    const entries = data.log.slice().reverse();
+    entries.forEach(entry => {
+      const row = document.createElement('div');
+      row.className = 'history-entry';
+      row.innerHTML =
+        '<span class="dot" style="background:' + typeColor[entry.type] + '"></span>' +
+        '<span class="h-type">' + entry.type + '</span>' +
+        '<span class="h-amt">' + entry.amt + ' cc</span>' +
+        '<span class="h-time">' + formatTime(entry.t) + '</span>' +
+        '<button class="h-del" data-ts="' + entry.t + '">&times;</button>';
+      els.historyList.appendChild(row);
+    });
+    els.historyList.querySelectorAll('.h-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ts = Number(btn.dataset.ts);
+        const idx = data.log.findIndex(e => e.t === ts);
+        if (idx === -1) return;
+        const [removed] = data.log.splice(idx, 1);
+        data[removed.type] -= removed.amt;
+        if (data[removed.type] < 0) data[removed.type] = 0;
+        saveData(data);
+        render();
+        showToast('Removed ' + removed.amt + ' cc ' + removed.type);
+      });
+    });
+  }
+
+  function formatDateLabel() {
+    const now = new Date();
+    const opts = { weekday: 'long', month: 'short', day: 'numeric' };
+    els.dateLabel.textContent = now.toLocaleDateString(undefined, opts);
+  }
+
+  function render() {
+    data = loadData(); // re-check date rollover
+    const total = data.water + data.coffee + data.decaf;
+    els.total.textContent = total;
+    els.waterTotal.textContent = data.water;
+    els.coffeeTotal.textContent = data.coffee;
+    els.decafTotal.textContent = data.decaf;
+    els.waterAmount.textContent = data.water + ' cc';
+    els.coffeeAmount.textContent = data.coffee + ' cc';
+    els.decafAmount.textContent = data.decaf + ' cc';
+    formatDateLabel();
+    renderHistory();
+  }
+
+  function showToast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => els.toast.classList.remove('show'), 1200);
+  }
+
+  document.querySelectorAll('button.dose').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.type;
+      const amt = parseInt(btn.dataset.amt, 10);
+      data[type] += amt;
+      data.log.push({ type, amt, t: Date.now() });
+      saveData(data);
+      render();
+      if (navigator.vibrate) navigator.vibrate(10);
+      showToast('+' + amt + ' cc ' + type);
+    });
+  });
+
+  document.getElementById('undo-btn').addEventListener('click', () => {
+    const last = data.log.pop();
+    if (!last) { showToast('Nothing to undo'); return; }
+    data[last.type] -= last.amt;
+    if (data[last.type] < 0) data[last.type] = 0;
+    saveData(data);
+    render();
+    showToast('Undid ' + last.amt + ' cc ' + last.type);
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (!confirm('Reset all totals for today?')) return;
+    data = { date: todayKey(), water: 0, coffee: 0, decaf: 0, log: [] };
+    saveData(data);
+    render();
+    showToast('Reset');
+  });
+
+  render();
+  // Re-render periodically in case the day rolls over while the app is open
+  setInterval(render, 60000);
+</script>
+
+</body>
+</html>
