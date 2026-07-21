@@ -35,88 +35,88 @@
   }
   header {
     text-align: center;
-    padding: 18px 16px 10px;
+    padding: 10px 16px 6px;
   }
   header h1 {
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--muted);
-    margin: 0 0 4px;
+    margin: 0 0 2px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
   }
   .total-value {
-    font-size: clamp(50px, 17vw, 105px);
+    font-size: clamp(40px, 14vw, 85px);
     font-weight: 800;
     line-height: 1.0;
     letter-spacing: -2px;
     white-space: nowrap;
   }
   .total-unit {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-top: 2px;
+    margin-top: 1px;
   }
   .breakdown {
     display: flex;
     justify-content: center;
-    gap: 14px;
-    margin-top: 8px;
-    font-size: 13px;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 12px;
     color: var(--muted);
   }
   .breakdown .dot {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    margin-right: 5px;
+    margin-right: 4px;
     vertical-align: middle;
   }
   main {
     flex: 1;
-    padding: 8px 16px 16px;
+    padding: 4px 12px 12px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
   }
   .card {
     background: var(--card);
-    border-radius: 18px;
-    padding: 14px;
+    border-radius: 14px;
+    padding: 10px 12px;
   }
   .card-title {
     display: flex;
     align-items: center;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
   .card-title .swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 4px;
-    margin-right: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    margin-right: 6px;
   }
   .card-title .amount {
     margin-left: auto;
     font-weight: 500;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 12px;
   }
   .btn-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 6px;
   }
   button.dose {
     border: none;
-    border-radius: 12px;
-    padding: 14px 0;
-    font-size: 16px;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-size: 14px;
     font-weight: 600;
     color: #fff;
     transition: transform 0.08s ease, opacity 0.15s ease;
@@ -130,49 +130,49 @@
   .decaf-btn { background: var(--decaf); }
 
   footer {
-    padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+    padding: 6px 12px calc(12px + env(safe-area-inset-bottom));
     display: flex;
-    gap: 10px;
+    gap: 8px;
   }
   .ghost-btn {
     flex: 1;
     background: transparent;
     border: 1px solid #2a2f3a;
     color: var(--muted);
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 14px;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
     font-weight: 600;
   }
   .ghost-btn:active { opacity: 0.6; }
 
   #history-list {
-    margin-top: 10px;
+    margin-top: 6px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    max-height: 260px;
+    gap: 4px;
+    max-height: 160px;
     overflow-y: auto;
   }
   .history-empty {
     color: var(--muted);
-    font-size: 13px;
-    padding: 6px 0;
+    font-size: 12px;
+    padding: 4px 0;
     text-align: center;
   }
   .history-entry {
     display: flex;
     align-items: center;
     background: #1e232c;
-    border-radius: 10px;
-    padding: 9px 10px;
-    font-size: 14px;
+    border-radius: 8px;
+    padding: 7px 8px;
+    font-size: 13px;
   }
   .history-entry .dot {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 8px;
     flex-shrink: 0;
   }
   .history-entry .h-type {
@@ -180,35 +180,35 @@
     font-weight: 600;
   }
   .history-entry .h-amt {
-    margin-left: 8px;
+    margin-left: 6px;
     color: var(--muted);
   }
   .history-entry .h-time {
     margin-left: auto;
     color: var(--muted);
-    font-size: 12px;
-    padding-right: 8px;
+    font-size: 11px;
+    padding-right: 6px;
   }
   .history-entry .h-del {
     background: none;
     border: none;
     color: var(--muted);
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1;
-    padding: 4px 6px;
+    padding: 2px 4px;
   }
   .history-entry .h-del:active { opacity: 0.5; }
 
   .toast {
     position: fixed;
-    bottom: 90px;
+    bottom: 70px;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: #262c37;
     color: var(--text);
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-size: 13px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease, transform 0.2s ease;
@@ -252,7 +252,7 @@
   <div class="card">
     <div class="card-title">
       <span class="swatch" style="background:var(--coffee)"></span>
-      Coffee
+      Coffee (60%)
       <span class="amount" id="coffee-amount">0 cc</span>
     </div>
     <div class="btn-row">
@@ -268,7 +268,7 @@
   <div class="card">
     <div class="card-title">
       <span class="swatch" style="background:var(--decaf)"></span>
-      Decaf Coffee
+      Decaf Coffee (90%)
       <span class="amount" id="decaf-amount">0 cc</span>
     </div>
     <div class="btn-row">
@@ -342,7 +342,6 @@
   };
 
   const typeColor = { water: 'var(--water)', coffee: 'var(--coffee)', decaf: 'var(--decaf)' };
-  let historyOpen = true;
 
   function formatTime(ts) {
     return new Date(ts).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
@@ -358,7 +357,6 @@
       els.historyList.appendChild(empty);
       return;
     }
-    // newest first
     const entries = data.log.slice().reverse();
     entries.forEach(entry => {
       const row = document.createElement('div');
@@ -393,7 +391,7 @@
   }
 
   function render() {
-    data = loadData(); // re-check date rollover
+    data = loadData();
     const total = data.water + data.coffee + data.decaf;
     els.total.textContent = total;
     els.waterTotal.textContent = data.water;
@@ -416,7 +414,15 @@
   document.querySelectorAll('button.dose').forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.type;
-      const amt = parseInt(btn.dataset.amt, 10);
+      const rawAmt = parseInt(btn.dataset.amt, 10);
+      
+      let amt = rawAmt;
+      if (type === 'coffee') {
+        amt = Math.round(rawAmt * 0.60);
+      } else if (type === 'decaf') {
+        amt = Math.round(rawAmt * 0.90);
+      }
+
       data[type] += amt;
       data.log.push({ type, amt, t: Date.now() });
       saveData(data);
@@ -445,7 +451,6 @@
   });
 
   render();
-  // Re-render periodically in case the day rolls over while the app is open
   setInterval(render, 60000);
 </script>
 
